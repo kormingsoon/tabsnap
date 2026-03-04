@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Tab Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <h1>AI Tab Manager</h1>
+      </div>
+      <div class="tab-count">
+        <span id="tab-count">0</span> tabs open
+      </div>
+    </header>
+
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search tabs..." autocomplete="off">
+    </div>
+
+    <div class="actions">
+      <button id="btn-group" class="action-btn primary">
+        ✦ AI Group Tabs
+      </button>
+      <button id="btn-dedupe" class="action-btn">
+        Dedupe
+      </button>
+      <button id="btn-suspend" class="action-btn" title="Unloads tabs from memory to save RAM. Tabs reload when you click them.">
+        Suspend Inactive
+      </button>
+    </div>
+
+    <div id="status-message" class="status hidden"></div>
+
+    <div class="section-header">
+      <span>Open Tabs</span>
+      <button id="btn-close-selected" class="link-btn hidden">Close selected</button>
+    </div>
+
+    <div id="tab-list" class="tab-list">
+      <div class="loading">Loading tabs...</div>
+    </div>
+
+    <footer>
+      <a id="settings-link" href="#" class="link-btn">⚙ Settings</a>
+      <span class="version">v0.1.0</span>
+    </footer>
+  </div>
+
+  <div id="settings-panel" class="settings-panel hidden">
+    <div class="settings-header">
+      <button id="back-btn" class="link-btn">← Back</button>
+      <h2>Settings</h2>
+    </div>
+    <div class="settings-body">
+      <label class="setting-item">
+        <span class="setting-label">Provider</span>
+        <select id="provider-select">
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="openrouter">OpenRouter (free models)</option>
+          <option value="groq">Groq</option>
+          <option value="custom">Custom (OpenAI-compatible)</option>
+        </select>
+      </label>
+      <label class="setting-item">
+        <span class="setting-label">Model</span>
+        <input type="text" id="model-input" placeholder="default">
+      </label>
+      <label class="setting-item" id="base-url-item">
+        <span class="setting-label">Base URL</span>
+        <input type="text" id="base-url-input" placeholder="https://...">
+      </label>
+      <label class="setting-item">
+        <span class="setting-label">API Key</span>
+        <input type="password" id="api-key-input" placeholder="sk-...">
+      </label>
+      <p class="setting-hint" id="provider-hint"></p>
+      <button id="save-settings" class="action-btn primary">Save Settings</button>
+    </div>
+  </div>
+
+  <div id="edit-groups-panel" class="settings-panel hidden">
+    <div class="settings-header">
+      <button id="edit-groups-back-btn" class="link-btn">← Back</button>
+      <h2>Edit Groups</h2>
+    </div>
+    <div class="settings-body" id="edit-groups-body">
+    </div>
+    <div class="edit-groups-footer">
+      <button id="save-groups-btn" class="action-btn primary">Save</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
