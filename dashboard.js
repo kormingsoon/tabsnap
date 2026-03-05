@@ -44,13 +44,14 @@ let currentSection = "all-tabs";
 function setupNav() {
   document.querySelectorAll(".nav-item").forEach((btn) => {
     btn.addEventListener("click", async () => {
+      const section = btn.dataset.section;
+      if (section === currentSection) return;
       document.querySelectorAll(".nav-item").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       document.querySelectorAll(".section").forEach((s) => {
         s.classList.add("hidden");
         s.hidden = true;
       });
-      const section = btn.dataset.section;
       const sectionEl = document.getElementById(`section-${section}`);
       sectionEl.classList.remove("hidden");
       sectionEl.hidden = false;
@@ -489,6 +490,11 @@ async function handleDashAIGroup() {
       .filter((t) => t.url !== window.location.href)
       .map((t) => ({ id: t.id, title: t.title, url: t.url }));
 
+    if (tabData.length === 0) {
+      showDashStatus("No other tabs to group in this window.", "error");
+      return;
+    }
+
     const groups = await chrome.runtime.sendMessage({
       type: "AI_GROUP_TABS",
       tabs: tabData,
@@ -500,7 +506,10 @@ async function handleDashAIGroup() {
       },
     });
 
-    if (groups.error) { showDashStatus(groups.error, "error"); return; }
+    if (!groups || groups.error) {
+      showDashStatus(groups?.error || "No response from background.", "error");
+      return;
+    }
 
     showDashStatus(`Created ${groups.length} tab groups.`, "success");
     document.querySelector('[data-section="groups"]').click();
@@ -522,11 +531,15 @@ async function openHomeTabs() {
   }
 
   const allOpen = await chrome.tabs.query({});
-  const openUrls = new Set(allOpen.map((t) => t.url));
+  function normalizeUrl(u) {
+    try { const p = new URL(u); return p.hostname + p.pathname.replace(/\/$/, "") + p.search; }
+    catch { return u; }
+  }
+  const openUrls = new Set(allOpen.map((t) => normalizeUrl(t.url)));
   let opened = 0;
 
   for (const tab of homeTabs) {
-    if (!openUrls.has(tab.url)) {
+    if (!openUrls.has(normalizeUrl(tab.url))) {
       await chrome.tabs.create({ url: tab.url, active: false });
       opened++;
     }
