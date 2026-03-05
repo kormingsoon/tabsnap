@@ -164,16 +164,21 @@ chrome.tabs.onActivated.addListener(async ({ tabId }) => {
 // ─── Home tabs auto-open on startup ───────────────────────────────────────────
 
 chrome.runtime.onStartup.addListener(async () => {
-  const { homeTabs = [], homeTabsAutoOpen = false } =
-    await chrome.storage.local.get(["homeTabs", "homeTabsAutoOpen"]);
-  if (!homeTabsAutoOpen || homeTabs.length === 0) return;
+  try {
+    const { homeTabs = [], homeTabsAutoOpen = false } =
+      await chrome.storage.local.get(["homeTabs", "homeTabsAutoOpen"]);
+    if (!homeTabsAutoOpen || homeTabs.length === 0) return;
 
-  const allOpen = await chrome.tabs.query({});
-  const openUrls = new Set(allOpen.map((t) => t.url));
+    const allOpen = await chrome.tabs.query({});
+    const openUrls = new Set(allOpen.map((t) => t.url));
 
-  for (const homeTab of homeTabs) {
-    if (!openUrls.has(homeTab.url)) {
-      await chrome.tabs.create({ url: homeTab.url, active: false });
+    for (const homeTab of homeTabs) {
+      if (!homeTab.url) continue;
+      if (!openUrls.has(homeTab.url)) {
+        await chrome.tabs.create({ url: homeTab.url, active: false });
+      }
     }
+  } catch {
+    // startup home tabs failed silently
   }
 });
