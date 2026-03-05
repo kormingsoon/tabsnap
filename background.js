@@ -143,3 +143,37 @@ async function callOpenAICompat(prompt, config) {
   const data = await response.json();
   return data.choices[0]?.message?.content ?? "";
 }
+
+// ─── Analytics tracking ────────────────────────────────────────────────────────
+
+chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    if (!tab.url) return;
+    if (tab.url.startsWith("chrome://") || tab.url.startsWith("chrome-extension://")) return;
+    const hostname = new URL(tab.url).hostname;
+    if (!hostname) return;
+    const { analytics = {} } = await chrome.storage.local.get("analytics");
+    analytics[hostname] = (analytics[hostname] || 0) + 1;
+    await chrome.storage.local.set({ analytics });
+  } catch {
+    // tab may have been closed before we could read it
+  }
+});
+
+// ─── Home tabs auto-open on startup ───────────────────────────────────────────
+
+chrome.runtime.onStartup.addListener(async () => {
+  const { homeTabs = [], homeTabsAutoOpen = false } =
+    await chrome.storage.local.get(["homeTabs", "homeTabsAutoOpen"]);
+  if (!homeTabsAutoOpen || homeTabs.length === 0) return;
+
+  const allOpen = await chrome.tabs.query({});
+  const openUrls = new Set(allOpen.map((t) => t.url));
+
+  for (const homeTab of homeTabs) {
+    if (!openUrls.has(homeTab.url)) {
+      await chrome.tabs.create({ url: homeTab.url, active: false });
+    }
+  }
+});
