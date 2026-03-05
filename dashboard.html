@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabSnap</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div id="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">TabSnap</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="all-tabs">
+          <span class="nav-icon">⊞</span> All Tabs
+        </button>
+        <button class="nav-item" data-section="groups">
+          <span class="nav-icon">◫</span> Groups
+        </button>
+        <button class="nav-item" data-section="recent">
+          <span class="nav-icon">↺</span> Recent
+        </button>
+        <button class="nav-item" data-section="analytics">
+          <span class="nav-icon">◈</span> Analytics
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="open-home-tabs" class="sidebar-action-btn">⌂ Open Home Tabs</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="main-header">
+        <input type="text" id="dash-search" placeholder="Search tabs..." autocomplete="off">
+        <button id="dash-ai-group" class="dash-btn primary">✦ AI Group Tabs</button>
+      </div>
+      <div id="section-all-tabs" class="section"></div>
+      <div id="section-groups" class="section hidden"></div>
+      <div id="section-recent" class="section hidden"></div>
+      <div id="section-analytics" class="section hidden"></div>
+    </main>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>
