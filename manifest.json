@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TabSnap — AI Tab Manager",
   "version": "1.0.0",
-  "description": "Manage your browser tabs intelligently with AI",
+  "description": "Snap your tabs into smart groups with one click. Powered by free AI — no signup, just your own API key.",
   "permissions": [
     "tabs",
     "storage",
