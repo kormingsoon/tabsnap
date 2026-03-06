@@ -47,6 +47,7 @@
 
     <footer>
       <a id="settings-link" href="#" class="link-btn">⚙ Settings</a>
+      <a id="home-tabs-link" href="#" class="link-btn">⌂ Home</a>
       <span class="version">v0.2.0</span>
     </footer>
   </div>
@@ -96,6 +97,25 @@
     </div>
     <div class="edit-groups-footer">
       <button id="save-groups-btn" class="action-btn primary">Save</button>
+    </div>
+  </div>
+
+  <div id="home-tabs-panel" class="settings-panel hidden">
+    <div class="settings-header">
+      <button id="home-tabs-back-btn" class="link-btn">← Back</button>
+      <h2>Home Tabs</h2>
+    </div>
+    <div class="settings-body">
+      <div class="home-tabs-actions">
+        <button id="btn-add-current" class="action-btn">+ Add current tab</button>
+        <button id="btn-snapshot" class="action-btn">Snapshot all</button>
+      </div>
+      <div id="home-tabs-list" class="home-tabs-list"></div>
+      <label class="setting-item home-tabs-toggle-row">
+        <span class="setting-label">Auto-open on browser start</span>
+        <input type="checkbox" id="home-tabs-auto-open">
+      </label>
+      <button id="btn-open-home-now" class="action-btn primary">⌂ Open now</button>
     </div>
   </div>
 

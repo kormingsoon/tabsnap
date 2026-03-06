@@ -332,6 +332,18 @@ function setupListeners() {
     $("edit-groups-panel").classList.add("hidden");
   });
   $("save-groups-btn").addEventListener("click", saveGroups);
+
+  $("home-tabs-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    showHomeTabs();
+  });
+  $("home-tabs-back-btn").addEventListener("click", hideHomeTabs);
+  $("btn-add-current").addEventListener("click", addCurrentTab);
+  $("btn-snapshot").addEventListener("click", snapshotAllTabs);
+  $("btn-open-home-now").addEventListener("click", openHomeTabs);
+  $("home-tabs-auto-open").addEventListener("change", async (e) => {
+    await chrome.storage.local.set({ homeTabsAutoOpen: e.target.checked });
+  });
 }
 
 // ─── AI Group ────────────────────────────────────────────────────────────────
@@ -592,4 +604,120 @@ async function saveSettings() {
   await chrome.storage.local.set({ apiKey, provider, model, baseUrl });
   hideSettings();
   showStatus("Settings saved.", "success");
+}
+
+// ─── Home Tabs ────────────────────────────────────────────────────────────────
+
+function showHomeTabs() {
+  $("home-tabs-panel").classList.remove("hidden");
+  loadHomeTabs();
+}
+
+function hideHomeTabs() {
+  $("home-tabs-panel").classList.add("hidden");
+}
+
+async function loadHomeTabs() {
+  const { homeTabs = [], homeTabsAutoOpen = false } =
+    await chrome.storage.local.get(["homeTabs", "homeTabsAutoOpen"]);
+  $("home-tabs-auto-open").checked = homeTabsAutoOpen;
+  renderHomeTabsList(homeTabs);
+}
+
+function renderHomeTabsList(homeTabs) {
+  const list = $("home-tabs-list");
+  list.innerHTML = "";
+
+  if (homeTabs.length === 0) {
+    list.innerHTML = '<div class="loading">No home tabs saved yet.</div>';
+    return;
+  }
+
+  for (const tab of homeTabs) {
+    const item = document.createElement("div");
+    item.className = "home-tab-item";
+
+    const favicon = document.createElement("img");
+    favicon.className = "tab-favicon";
+    if (tab.favicon) {
+      favicon.src = tab.favicon;
+      favicon.onerror = () => favicon.classList.add("no-icon");
+    } else {
+      favicon.classList.add("no-icon");
+    }
+
+    const info = document.createElement("div");
+    info.className = "tab-info";
+
+    const title = document.createElement("span");
+    title.className = "tab-title";
+    title.textContent = tab.title || tab.url;
+
+    const url = document.createElement("span");
+    url.className = "tab-url";
+    try { url.textContent = new URL(tab.url).hostname; } catch { url.textContent = tab.url; }
+
+    info.appendChild(title);
+    info.appendChild(url);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "tab-close";
+    removeBtn.textContent = "×";
+    removeBtn.title = "Remove from home tabs";
+    removeBtn.addEventListener("click", async () => {
+      const { homeTabs: current = [] } = await chrome.storage.local.get("homeTabs");
+      const updated = current.filter((t) => t.url !== tab.url);
+      await chrome.storage.local.set({ homeTabs: updated });
+      renderHomeTabsList(updated);
+    });
+
+    item.appendChild(favicon);
+    item.appendChild(info);
+    item.appendChild(removeBtn);
+    list.appendChild(item);
+  }
+}
+
+async function addCurrentTab() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab) return;
+  const { homeTabs = [] } = await chrome.storage.local.get("homeTabs");
+  if (homeTabs.some((t) => t.url === tab.url)) {
+    showStatus("Tab already saved.", "success");
+    return;
+  }
+  homeTabs.push({ url: tab.url, title: tab.title || "", favicon: tab.favIconUrl || "" });
+  await chrome.storage.local.set({ homeTabs });
+  renderHomeTabsList(homeTabs);
+  showStatus("Tab added to home tabs.", "success");
+}
+
+async function snapshotAllTabs() {
+  const tabs = allTabs.map((t) => ({ url: t.url, title: t.title || "", favicon: t.favIconUrl || "" }));
+  await chrome.storage.local.set({ homeTabs: tabs });
+  renderHomeTabsList(tabs);
+  showStatus(`Saved ${tabs.length} tab${tabs.length !== 1 ? "s" : ""} as home tabs.`, "success");
+}
+
+async function openHomeTabs() {
+  const { homeTabs = [] } = await chrome.storage.local.get("homeTabs");
+  if (homeTabs.length === 0) {
+    showStatus("No home tabs saved.", "success");
+    return;
+  }
+  const allOpen = await chrome.tabs.query({});
+  const openUrls = new Set(allOpen.map((t) => t.url));
+  let opened = 0;
+  for (const tab of homeTabs) {
+    if (!openUrls.has(tab.url)) {
+      await chrome.tabs.create({ url: tab.url, active: false });
+      opened++;
+    }
+  }
+  showStatus(
+    opened > 0 ? `Opened ${opened} home tab(s).` : "All home tabs already open.",
+    "success"
+  );
+  window.close();
 }
