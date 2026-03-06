@@ -573,6 +573,11 @@ async function loadSettings() {
   $("model-input").value = stored.model || "";
   $("base-url-input").value = stored.baseUrl || "";
   updateProviderUI(provider);
+  const { dashboardEnabled = true } = await chrome.storage.local.get("dashboardEnabled");
+  $("dashboard-enabled").checked = dashboardEnabled;
+  $("dashboard-enabled").addEventListener("change", async (e) => {
+    await chrome.storage.local.set({ dashboardEnabled: e.target.checked });
+  });
 
   $("provider-select").addEventListener("change", (e) => {
     updateProviderUI(e.target.value);

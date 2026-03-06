@@ -542,3 +542,12 @@ footer {
 #edit-groups-body input {
   font-family: inherit;
 }
+
+/* Dashboard toggle */
+.setting-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #7c6af7;
+  cursor: pointer;
+  flex-shrink: 0;
+}
