@@ -1,4 +1,4 @@
-// popup.js — AI Tab Manager UI
+// popup.js — TabSnap UI
 
 const $ = (id) => document.getElementById(id);
 
