@@ -479,8 +479,6 @@ async function handleDashAIGroup() {
   }
 
   const btn = document.getElementById("dash-ai-group");
-  btn.disabled = true;
-  btn.textContent = "Grouping...";
 
   try {
     const [thisTab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -494,6 +492,9 @@ async function handleDashAIGroup() {
       showDashStatus("No other tabs to group in this window.", "error");
       return;
     }
+
+    btn.disabled = true;
+    btn.textContent = "Grouping...";
 
     const groups = await chrome.runtime.sendMessage({
       type: "AI_GROUP_TABS",

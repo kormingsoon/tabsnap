@@ -381,8 +381,8 @@ async function handleAIGroup() {
       },
     });
 
-    if (groups.error) {
-      showStatus(groups.error, "error");
+    if (!groups || groups.error) {
+      showStatus(groups?.error || "No response from background.", "error");
       return;
     }
 
@@ -704,10 +704,14 @@ async function openHomeTabs() {
     return;
   }
   const allOpen = await chrome.tabs.query({});
-  const openUrls = new Set(allOpen.map((t) => t.url));
+  function normalizeUrl(u) {
+    try { const p = new URL(u); return p.hostname + p.pathname.replace(/\/$/, "") + p.search; }
+    catch { return u; }
+  }
+  const openUrls = new Set(allOpen.map((t) => normalizeUrl(t.url)));
   let opened = 0;
   for (const tab of homeTabs) {
-    if (!openUrls.has(tab.url)) {
+    if (!openUrls.has(normalizeUrl(tab.url))) {
       await chrome.tabs.create({ url: tab.url, active: false });
       opened++;
     }
