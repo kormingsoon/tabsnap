@@ -542,3 +542,52 @@ footer {
 #edit-groups-body input {
   font-family: inherit;
 }
+
+/* Dashboard toggle */
+.setting-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #7c6af7;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Home Tabs panel */
+.home-tabs-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.home-tabs-actions .action-btn {
+  font-size: 11px;
+  padding: 6px 8px;
+}
+
+.home-tabs-list {
+  border: 1px solid #2a2a3e;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  min-height: 60px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.home-tab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid #1e1e2e;
+}
+
+.home-tab-item:last-child {
+  border-bottom: none;
+}
+
+.home-tabs-toggle-row {
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}

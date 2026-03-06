@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabSnap</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div id="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">TabSnap</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button type="button" class="nav-item active" data-section="all-tabs" aria-label="All Tabs">
+          <span class="nav-icon" aria-hidden="true">⊞</span> All Tabs
+        </button>
+        <button type="button" class="nav-item" data-section="groups" aria-label="Groups">
+          <span class="nav-icon" aria-hidden="true">◫</span> Groups
+        </button>
+        <button type="button" class="nav-item" data-section="recent" aria-label="Recent">
+          <span class="nav-icon" aria-hidden="true">↺</span> Recent
+        </button>
+        <button type="button" class="nav-item" data-section="analytics" aria-label="Analytics">
+          <span class="nav-icon" aria-hidden="true">◈</span> Analytics
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button type="button" id="open-home-tabs" class="sidebar-action-btn">⌂ Open Home Tabs</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="main-header">
+        <label for="dash-search" class="sr-only">Search tabs</label>
+        <input type="text" id="dash-search" placeholder="Search tabs..." autocomplete="off">
+        <button type="button" id="dash-ai-group" class="dash-btn primary" aria-label="AI Group Tabs">
+          <span aria-hidden="true">✦</span> AI Group Tabs
+        </button>
+      </div>
+      <div id="section-all-tabs" class="section"></div>
+      <div id="section-groups" class="section hidden" hidden></div>
+      <div id="section-recent" class="section hidden" hidden></div>
+      <div id="section-analytics" class="section hidden" hidden></div>
+    </main>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>

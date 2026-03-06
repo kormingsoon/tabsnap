@@ -24,9 +24,12 @@ There are no automated tests, linters, or test commands.
 |------|------|
 | `manifest.json` | MV3 config — permissions, service worker, popup registration |
 | `background.js` | Service worker: receives `AI_GROUP_TABS` message, calls Claude API, applies `chrome.tabGroups` |
-| `popup.js` | All UI logic: tab list, search, dedup, suspend, settings panel, message passing |
-| `popup.html` | Popup shell (thin — all structure rendered by popup.js) |
-| `popup.css` | Dark-theme styles (360px wide popup, purple `#7c6af7` accent) |
+| `popup/popup.js` | All UI logic: tab list, search, dedup, suspend, settings panel, message passing |
+| `popup/popup.html` | Popup shell (thin — all structure rendered by popup.js) |
+| `popup/popup.css` | Dark-theme styles (360px wide popup, purple `#7c6af7` accent) |
+| `dashboard/dashboard.html` | New tab override — home tabs dashboard |
+| `dashboard/dashboard.js` | Dashboard UI logic: home tabs, pinned tabs, session management |
+| `dashboard/dashboard.css` | Dashboard styles |
 
 ### Data Flow
 

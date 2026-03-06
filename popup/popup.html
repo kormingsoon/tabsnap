@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Tab Manager</title>
+  <title>TabSnap</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <header>
       <div class="logo">
         <span class="logo-icon">⬡</span>
-        <h1>AI Tab Manager</h1>
+        <h1>TabSnap </h1>
       </div>
       <div class="tab-count">
         <span id="tab-count">0</span> tabs open
@@ -47,7 +47,8 @@
 
     <footer>
       <a id="settings-link" href="#" class="link-btn">⚙ Settings</a>
-      <span class="version">v0.1.0</span>
+      <a id="home-tabs-link" href="#" class="link-btn">⌂ Home</a>
+      <span class="version">v0.2.0</span>
     </footer>
   </div>
 
@@ -79,6 +80,10 @@
         <input type="password" id="api-key-input" placeholder="sk-...">
       </label>
       <p class="setting-hint" id="provider-hint"></p>
+      <label class="setting-item">
+        <span class="setting-label">Use TabSnap as New Tab</span>
+        <input type="checkbox" id="dashboard-enabled" checked>
+      </label>
       <button id="save-settings" class="action-btn primary">Save Settings</button>
     </div>
   </div>
@@ -92,6 +97,25 @@
     </div>
     <div class="edit-groups-footer">
       <button id="save-groups-btn" class="action-btn primary">Save</button>
+    </div>
+  </div>
+
+  <div id="home-tabs-panel" class="settings-panel hidden">
+    <div class="settings-header">
+      <button id="home-tabs-back-btn" class="link-btn">← Back</button>
+      <h2>Home Tabs</h2>
+    </div>
+    <div class="settings-body">
+      <div class="home-tabs-actions">
+        <button id="btn-add-current" class="action-btn">+ Add current tab</button>
+        <button id="btn-snapshot" class="action-btn">Snapshot all</button>
+      </div>
+      <div id="home-tabs-list" class="home-tabs-list"></div>
+      <label class="setting-item home-tabs-toggle-row">
+        <span class="setting-label">Auto-open on browser start</span>
+        <input type="checkbox" id="home-tabs-auto-open">
+      </label>
+      <button id="btn-open-home-now" class="action-btn primary">⌂ Open now</button>
     </div>
   </div>
 
