@@ -327,6 +327,10 @@ function setupListeners() {
 
   $("back-btn").addEventListener("click", hideSettings);
   $("save-settings").addEventListener("click", saveSettings);
+  $("provider-select").addEventListener("change", (e) => updateProviderUI(e.target.value));
+  $("dashboard-enabled").addEventListener("change", async (e) => {
+    await chrome.storage.local.set({ dashboardEnabled: e.target.checked });
+  });
 
   $("edit-groups-back-btn").addEventListener("click", () => {
     $("edit-groups-panel").classList.add("hidden");
@@ -587,13 +591,6 @@ async function loadSettings() {
   updateProviderUI(provider);
   const { dashboardEnabled = true } = await chrome.storage.local.get("dashboardEnabled");
   $("dashboard-enabled").checked = dashboardEnabled;
-  $("dashboard-enabled").addEventListener("change", async (e) => {
-    await chrome.storage.local.set({ dashboardEnabled: e.target.checked });
-  });
-
-  $("provider-select").addEventListener("change", (e) => {
-    updateProviderUI(e.target.value);
-  });
 }
 
 async function saveSettings() {
