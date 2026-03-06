@@ -4,14 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TabSnap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div id="app">
     <header>
       <div class="logo">
-        <span class="logo-icon">⬡</span>
-        <h1>TabSnap </h1>
+        <svg class="logo-icon" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="11" width="13" height="12" rx="2.5" fill="currentColor" opacity="0.18"/>
+          <rect x="4" y="8" width="13" height="12" rx="2.5" fill="currentColor" opacity="0.45"/>
+          <rect x="8" y="4" width="17" height="13" rx="2.5" fill="currentColor"/>
+          <rect x="10.5" y="6.5" width="5" height="1.5" rx="0.75" fill="white" opacity="0.55"/>
+          <rect x="10.5" y="10" width="11" height="1" rx="0.5" fill="white" opacity="0.2"/>
+          <rect x="10.5" y="12.5" width="8" height="1" rx="0.5" fill="white" opacity="0.14"/>
+        </svg>
+        <span class="logo-wordmark">TabSnap</span>
       </div>
       <div class="tab-count">
         <span id="tab-count">0</span> tabs open
