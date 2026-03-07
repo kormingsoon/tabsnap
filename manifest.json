@@ -26,8 +26,11 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "chrome_url_overrides": {
-    "newtab": "dashboard/dashboard.html"
+  "commands": {
+    "open-dashboard": {
+      "suggested_key": { "default": "Alt+Y" },
+      "description": "Open TabSnap Dashboard"
+    }
   },
   "icons": {
     "16": "icons/icon16.png",

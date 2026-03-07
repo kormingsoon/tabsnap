@@ -23,8 +23,11 @@
         </svg>
         <span class="logo-wordmark">TabSnap</span>
       </div>
-      <div class="tab-count">
-        <span id="tab-count">0</span> tabs open
+      <div class="header-right">
+        <button id="btn-open-dashboard" class="icon-btn" title="Open Dashboard">⊞ <kbd class="shortcut-kbd">Alt+Y</kbd></button>
+        <div class="tab-count">
+          <span id="tab-count">0</span> tabs open
+        </div>
       </div>
     </header>
 
@@ -72,7 +75,7 @@
 
     <footer>
       <a id="settings-link" href="#" class="link-btn">⚙ Settings</a>
-      <a id="home-tabs-link" href="#" class="link-btn">⌂ Home</a>
+      <a id="home-tabs-link" href="#" class="link-btn">⌂ Saved Tabs</a>
       <span class="version">v0.2.0</span>
     </footer>
   </div>
@@ -105,10 +108,6 @@
         <input type="password" id="api-key-input" placeholder="sk-...">
       </label>
       <p class="setting-hint" id="provider-hint"></p>
-      <label class="setting-item">
-        <span class="setting-label">Use TabSnap as New Tab</span>
-        <input type="checkbox" id="dashboard-enabled" checked>
-      </label>
       <button id="save-settings" class="action-btn primary">Save Settings</button>
     </div>
   </div>
@@ -128,19 +127,20 @@
   <div id="home-tabs-panel" class="settings-panel hidden">
     <div class="settings-header">
       <button id="home-tabs-back-btn" class="link-btn">← Back</button>
-      <h2>Home Tabs</h2>
+      <h2>Saved Tabs</h2>
     </div>
     <div class="settings-body">
+      <p class="panel-subtitle">Save tabs to restore all at once — like a daily starter set.</p>
       <div class="home-tabs-actions">
         <button id="btn-add-current" class="action-btn">+ Add current tab</button>
-        <button id="btn-snapshot" class="action-btn">Snapshot all</button>
+        <button id="btn-snapshot" class="action-btn">Save all open tabs</button>
       </div>
       <div id="home-tabs-list" class="home-tabs-list"></div>
       <label class="setting-item home-tabs-toggle-row">
         <span class="setting-label">Auto-open on browser start</span>
         <input type="checkbox" id="home-tabs-auto-open">
       </label>
-      <button id="btn-open-home-now" class="action-btn primary">⌂ Open now</button>
+      <button id="btn-open-home-now" class="action-btn primary">▶ Open all saved tabs</button>
     </div>
   </div>
 

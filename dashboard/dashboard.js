@@ -20,13 +20,6 @@ function formatRelativeTime(ms) {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { dashboardEnabled = true } = await chrome.storage.local.get("dashboardEnabled");
-  if (!dashboardEnabled) {
-    document.body.innerHTML = "";
-    document.body.style.cssText = "background:#fff;margin:0;";
-    return;
-  }
-
   setupNav();
   await loadSection("all-tabs");
 

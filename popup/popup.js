@@ -320,6 +320,11 @@ function setupListeners() {
     await loadTabs();
   });
 
+  $("btn-open-dashboard").addEventListener("click", () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("dashboard/dashboard.html") });
+    window.close();
+  });
+
   $("settings-link").addEventListener("click", (e) => {
     e.preventDefault();
     showSettings();
@@ -328,9 +333,6 @@ function setupListeners() {
   $("back-btn").addEventListener("click", hideSettings);
   $("save-settings").addEventListener("click", saveSettings);
   $("provider-select").addEventListener("change", (e) => updateProviderUI(e.target.value));
-  $("dashboard-enabled").addEventListener("change", async (e) => {
-    await chrome.storage.local.set({ dashboardEnabled: e.target.checked });
-  });
 
   $("edit-groups-back-btn").addEventListener("click", () => {
     $("edit-groups-panel").classList.add("hidden");
@@ -615,8 +617,6 @@ async function loadSettings() {
   $("model-input").value = stored.model || defaultModel;
   $("base-url-input").value = stored.baseUrl || "";
   updateProviderUI(provider);
-  const { dashboardEnabled = true } = await chrome.storage.local.get("dashboardEnabled");
-  $("dashboard-enabled").checked = dashboardEnabled;
 }
 
 async function saveSettings() {
