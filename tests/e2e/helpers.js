@@ -29,16 +29,13 @@ export async function launchBrowser() {
  * URL format: chrome-extension://<id>/background.js
  */
 export async function getExtensionId(browser) {
-  // Give the service worker time to register
-  await new Promise((r) => setTimeout(r, 1000));
-  const targets = browser.targets();
-  const sw = targets.find(
+  const swTarget = await browser.waitForTarget(
     (t) =>
       t.type() === 'service_worker' &&
-      t.url().startsWith('chrome-extension://')
+      t.url().startsWith('chrome-extension://'),
+    { timeout: 10000 }
   );
-  if (!sw) throw new Error('Extension service worker not found. Extension may not have loaded.');
-  return new URL(sw.url()).hostname;
+  return new URL(swTarget.url()).hostname;
 }
 
 export const popupUrl = (id) =>
