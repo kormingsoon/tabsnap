@@ -20,13 +20,6 @@ function formatRelativeTime(ms) {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const { dashboardEnabled = true } = await chrome.storage.local.get("dashboardEnabled");
-  if (!dashboardEnabled) {
-    document.body.innerHTML = "";
-    document.body.style.cssText = "background:#fff;margin:0;";
-    return;
-  }
-
   setupNav();
   await loadSection("all-tabs");
 
@@ -172,6 +165,80 @@ function createDashTabItem(tab) {
 
 // ─── Groups ───────────────────────────────────────────────────────────────────
 
+function renderGroupsHint() {
+  if (localStorage.getItem("groupsHintDismissed")) return null;
+
+  const hint = document.createElement("div");
+  hint.className = "groups-hint";
+
+  const text = document.createElement("span");
+  text.className = "groups-hint-text";
+  text.textContent = "↕ Drag tabs between groups to reorganize  ·  Click the color dot to change group color";
+
+  const dismiss = document.createElement("button");
+  dismiss.type = "button";
+  dismiss.className = "groups-hint-dismiss";
+  dismiss.title = "Dismiss";
+  dismiss.textContent = "×";
+  dismiss.addEventListener("click", () => {
+    localStorage.setItem("groupsHintDismissed", "1");
+    hint.remove();
+  });
+
+  hint.appendChild(text);
+  hint.appendChild(dismiss);
+  return hint;
+}
+
+const CHROME_COLORS = Object.entries(GROUP_COLOR_MAP).map(([name, hex]) => ({ name, hex }));
+
+function openColorPopover(dotBtn, group) {
+  // Close any existing popover
+  document.querySelector(".color-popover")?.remove();
+
+  const popover = document.createElement("div");
+  popover.className = "color-popover";
+
+  // Declare dismiss early so swatch handlers can reference it
+  const dismiss = (e) => {
+    if (!popover.contains(e.target) && e.target !== dotBtn) {
+      popover.remove();
+      document.removeEventListener("click", dismiss, true);
+    }
+  };
+
+  for (const { name, hex } of CHROME_COLORS) {
+    const swatch = document.createElement("button");
+    swatch.type = "button";
+    swatch.className = "color-swatch" + (group.color === name ? " active" : "");
+    swatch.style.background = hex;
+    swatch.title = name;
+    swatch.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      document.removeEventListener("click", dismiss, true);
+      try {
+        await chrome.tabGroups.update(group.id, { color: name });
+        group.color = name;
+        dotBtn.style.background = hex;
+        popover.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("active"));
+        swatch.classList.add("active");
+      } catch { /* group may have been removed */ }
+      popover.remove();
+    });
+    popover.appendChild(swatch);
+  }
+
+  // Position using getBoundingClientRect so popover escapes overflow:hidden
+  document.body.appendChild(popover);
+  const rect = dotBtn.getBoundingClientRect();
+  popover.style.position = "fixed";
+  popover.style.top = (rect.bottom + 6) + "px";
+  popover.style.left = rect.left + "px";
+  popover.style.zIndex = "9999";
+
+  setTimeout(() => document.addEventListener("click", dismiss, true), 0);
+}
+
 async function renderGroups() {
   const el = document.getElementById("section-groups");
   el.innerHTML = '<div class="dash-loading">Loading groups...</div>';
@@ -202,6 +269,9 @@ async function renderGroups() {
     }
   }
 
+  const hint = renderGroupsHint();
+  if (hint) el.appendChild(hint);
+
   const cards = document.createElement("div");
   cards.className = "group-cards";
   for (const group of groups) {
@@ -217,9 +287,16 @@ function createGroupCard(group, tabs) {
   const header = document.createElement("div");
   header.className = "group-card-header";
 
-  const dot = document.createElement("span");
-  dot.className = "group-card-dot";
+  const dot = document.createElement("button");
+  dot.type = "button";
+  dot.className = "color-dot-btn";
   dot.style.background = GROUP_COLOR_MAP[group.color] || "#6b6b8a";
+  dot.title = "Change group color";
+  dot.setAttribute("aria-label", "Change group color");
+  dot.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openColorPopover(dot, group);
+  });
 
   const name = document.createElement("span");
   name.className = "group-card-name";
@@ -240,6 +317,15 @@ function createGroupCard(group, tabs) {
   for (const tab of tabs) {
     const tabItem = document.createElement("div");
     tabItem.className = "group-card-tab";
+    tabItem.draggable = true;
+    tabItem.addEventListener("dragstart", (e) => {
+      tabItem.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", JSON.stringify({ tabId: tab.id, srcGroupId: group.id }));
+    });
+    tabItem.addEventListener("dragend", () => {
+      tabItem.classList.remove("dragging");
+    });
 
     const fav = document.createElement("img");
     fav.className = "dash-tab-favicon";
@@ -261,6 +347,37 @@ function createGroupCard(group, tabs) {
 
   card.appendChild(header);
   card.appendChild(tabList);
+
+  card.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    card.classList.add("drag-over");
+  });
+
+  card.addEventListener("dragleave", (e) => {
+    if (!card.contains(e.relatedTarget)) {
+      card.classList.remove("drag-over");
+    }
+  });
+
+  card.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    card.classList.remove("drag-over");
+    let payload;
+    try {
+      payload = JSON.parse(e.dataTransfer.getData("text/plain"));
+    } catch { return; }
+    const { tabId, srcGroupId } = payload;
+    if (srcGroupId === group.id) return;
+    try {
+      await chrome.tabs.group({ tabIds: [tabId], groupId: group.id });
+    } catch {
+      showDashStatus("Could not move tab — tabs can only be grouped within the same window.", "error");
+    } finally {
+      await renderGroups();
+    }
+  });
+
   return card;
 }
 

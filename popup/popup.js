@@ -320,6 +320,11 @@ function setupListeners() {
     await loadTabs();
   });
 
+  $("btn-open-dashboard").addEventListener("click", () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("dashboard/dashboard.html") });
+    window.close();
+  });
+
   $("settings-link").addEventListener("click", (e) => {
     e.preventDefault();
     showSettings();
@@ -328,9 +333,6 @@ function setupListeners() {
   $("back-btn").addEventListener("click", hideSettings);
   $("save-settings").addEventListener("click", saveSettings);
   $("provider-select").addEventListener("change", (e) => updateProviderUI(e.target.value));
-  $("dashboard-enabled").addEventListener("change", async (e) => {
-    await chrome.storage.local.set({ dashboardEnabled: e.target.checked });
-  });
 
   $("edit-groups-back-btn").addEventListener("click", () => {
     $("edit-groups-panel").classList.add("hidden");
@@ -348,6 +350,31 @@ function setupListeners() {
   $("home-tabs-auto-open").addEventListener("change", async (e) => {
     await chrome.storage.local.set({ homeTabsAutoOpen: e.target.checked });
   });
+
+  $("onboarding-submit").addEventListener("click", async () => {
+    const key = $("onboarding-key-input").value.trim();
+    if (!key) {
+      showStatus("Please enter an API key.", "error");
+      return;
+    }
+    await chrome.storage.local.set({
+      apiKey: key,
+      provider: "openrouter",
+      model: PROVIDER_INFO.openrouter.defaultModel,
+    });
+    hideOnboarding();
+    await handleAIGroup();
+  });
+}
+
+// ─── Onboarding ───────────────────────────────────────────────────────────────
+
+function showOnboarding() {
+  $("onboarding-panel").classList.remove("hidden");
+}
+
+function hideOnboarding() {
+  $("onboarding-panel").classList.add("hidden");
 }
 
 // ─── AI Group ────────────────────────────────────────────────────────────────
@@ -356,7 +383,7 @@ async function handleAIGroup() {
   const stored = await chrome.storage.local.get(["apiKey", "provider", "model", "baseUrl"]);
 
   if (!stored.apiKey) {
-    showStatus("No API key set. Click ⚙ Settings to add your key.", "error");
+    showOnboarding();
     return;
   }
 
@@ -375,7 +402,7 @@ async function handleAIGroup() {
       tabs,
       config: {
         apiKey: stored.apiKey,
-        provider: stored.provider || "anthropic",
+        provider: stored.provider || "openrouter",
         model: stored.model || "",
         baseUrl: stored.baseUrl || "",
       },
@@ -546,9 +573,9 @@ const PROVIDER_INFO = {
     showBaseUrl: false,
   },
   openrouter: {
-    hint: 'Free models available. Get your key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>',
+    hint: 'Free models — no credit card needed. Get your key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>',
     placeholder: "sk-or-...",
-    defaultModel: "meta-llama/llama-3.1-8b-instruct:free",
+    defaultModel: "arcee-ai/trinity-large-preview:free",
     showBaseUrl: false,
   },
   groq: {
@@ -583,14 +610,13 @@ function hideSettings() {
 
 async function loadSettings() {
   const stored = await chrome.storage.local.get(["apiKey", "provider", "model", "baseUrl"]);
-  const provider = stored.provider || "anthropic";
+  const provider = stored.provider || "openrouter";
   $("provider-select").value = provider;
   $("api-key-input").value = stored.apiKey || "";
-  $("model-input").value = stored.model || "";
+  const defaultModel = (PROVIDER_INFO[provider] || {}).defaultModel || "";
+  $("model-input").value = stored.model || defaultModel;
   $("base-url-input").value = stored.baseUrl || "";
   updateProviderUI(provider);
-  const { dashboardEnabled = true } = await chrome.storage.local.get("dashboardEnabled");
-  $("dashboard-enabled").checked = dashboardEnabled;
 }
 
 async function saveSettings() {

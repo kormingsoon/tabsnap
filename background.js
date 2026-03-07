@@ -20,6 +20,12 @@ const PROVIDER_DEFAULTS = {
   },
 };
 
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "open-dashboard") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("dashboard/dashboard.html") });
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "AI_GROUP_TABS") {
     groupTabsWithAI(message.tabs, message.config)
