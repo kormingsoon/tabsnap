@@ -332,6 +332,11 @@ function setupListeners() {
 
   $("back-btn").addEventListener("click", hideSettings);
   $("save-settings").addEventListener("click", saveSettings);
+  $("clear-analytics-btn").addEventListener("click", async () => {
+    await chrome.storage.local.remove("analytics");
+    showStatus("Analytics cleared.", "success");
+    hideSettings();
+  });
   $("provider-select").addEventListener("change", (e) => updateProviderUI(e.target.value));
 
   $("edit-groups-back-btn").addEventListener("click", () => {

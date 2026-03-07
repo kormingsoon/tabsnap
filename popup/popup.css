@@ -789,3 +789,18 @@ footer {
 .confirm-tab-preview div:not(:last-child) {
   border-bottom: 1px solid rgba(255,255,255,0.03);
 }
+
+/* ── Privacy disclosure ──────────────────────────────────── */
+
+.privacy-disclosure {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.privacy-disclosure .setting-hint strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
