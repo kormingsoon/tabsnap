@@ -8,10 +8,18 @@
   },
   "parserOptions": {
     "ecmaVersion": 2022,
-    "sourceType": "module"
+    "sourceType": "script"
   },
   "extends": "eslint:recommended",
   "rules": {
     "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["background.js"],
+      "parserOptions": {
+        "sourceType": "module"
+      }
+    }
+  ]
 }
