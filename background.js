@@ -41,7 +41,12 @@ async function groupTabsWithAI(tabs, config) {
   const tabList = tabs
     .map((t, i) => {
       let safeUrl = t.url;
-      try { const u = new URL(t.url); safeUrl = u.origin + u.pathname; } catch {}
+      try {
+        const u = new URL(t.url);
+        if (u.origin !== "null") {
+          safeUrl = u.origin + u.pathname;
+        }
+      } catch {}
       return `${i}: [${t.title}] ${safeUrl}`;
     })
     .join("\n");
