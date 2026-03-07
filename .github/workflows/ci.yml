@@ -25,6 +25,7 @@ jobs:
 
   test:
     name: E2E Tests
+    needs: lint
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -38,7 +39,12 @@ jobs:
       - run: npm ci
 
       - name: Install Chromium system dependencies
-        run: sudo npx puppeteer browsers install-deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+            libxrandr2 libgbm1 libasound2
 
       - name: Run E2E tests
         run: npm test

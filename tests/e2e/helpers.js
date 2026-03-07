@@ -13,8 +13,10 @@ export const EXTENSION_PATH = path.resolve(__dirname, '../../');
  */
 export async function launchBrowser() {
   return puppeteer.launch({
-    headless: true,
+    headless: false,
     args: [
+      '--headless=new',
+      '--enable-extensions',
       `--disable-extensions-except=${EXTENSION_PATH}`,
       `--load-extension=${EXTENSION_PATH}`,
       '--no-sandbox',

@@ -130,9 +130,9 @@ describe('Popup', () => {
       `Expected "Created 1 tab groups", got: "${statusText}"`
     );
 
-    // Clean up fake API key
+    // Clean up fake API key and provider
     await page.evaluate(async () => {
-      await chrome.storage.local.remove('apiKey');
+      await chrome.storage.local.remove(['apiKey', 'provider']);
     });
     await page.close();
   });
