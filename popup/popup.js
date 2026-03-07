@@ -389,8 +389,13 @@ function hideOnboarding() {
 // ─── AI Group ────────────────────────────────────────────────────────────────
 
 async function handleAIGroup() {
+  $("btn-group").disabled = true;
   const stored = await chrome.storage.local.get(["apiKey", "provider", "model", "baseUrl"]);
-  if (!stored.apiKey) { showOnboarding(); return; }
+  if (!stored.apiKey) {
+    $("btn-group").disabled = false;
+    showOnboarding();
+    return;
+  }
 
   const source = selectedTabIds.size > 0
     ? allTabs.filter((t) => selectedTabIds.has(t.id))
@@ -431,6 +436,8 @@ async function handleAIGroup() {
 async function proceedWithAIGroup() {
   const stored = handleAIGroup._stored;
   const source = handleAIGroup._source;
+  handleAIGroup._stored = null;
+  handleAIGroup._source = null;
   if (!stored || !source) return;
 
   showStatus("Analyzing tabs with AI...");
