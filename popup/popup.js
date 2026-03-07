@@ -391,11 +391,10 @@ async function handleAIGroup() {
   $("btn-group").disabled = true;
 
   try {
-    const tabs = allTabs.map((t) => ({
-      id: t.id,
-      title: t.title,
-      url: t.url,
-    }));
+    const source = selectedTabIds.size > 0
+      ? allTabs.filter((t) => selectedTabIds.has(t.id))
+      : allTabs;
+    const tabs = source.map((t) => ({ id: t.id, title: t.title, url: t.url }));
 
     const groups = await chrome.runtime.sendMessage({
       type: "AI_GROUP_TABS",
