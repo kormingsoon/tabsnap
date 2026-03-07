@@ -351,6 +351,15 @@ function setupListeners() {
     await chrome.storage.local.set({ homeTabsAutoOpen: e.target.checked });
   });
 
+  $("confirm-cancel-btn").addEventListener("click", () => {
+    $("confirm-panel").classList.add("hidden");
+    $("btn-group").disabled = false;
+  });
+  $("confirm-proceed-btn").addEventListener("click", () => {
+    $("confirm-panel").classList.add("hidden");
+    proceedWithAIGroup();
+  });
+
   $("onboarding-submit").addEventListener("click", async () => {
     const key = $("onboarding-key-input").value.trim();
     if (!key) {
@@ -381,27 +390,54 @@ function hideOnboarding() {
 
 async function handleAIGroup() {
   const stored = await chrome.storage.local.get(["apiKey", "provider", "model", "baseUrl"]);
+  if (!stored.apiKey) { showOnboarding(); return; }
 
-  if (!stored.apiKey) {
-    showOnboarding();
+  const source = selectedTabIds.size > 0
+    ? allTabs.filter((t) => selectedTabIds.has(t.id))
+    : allTabs;
+
+  if (source.length === 0) {
+    showStatus("No tabs to group.", "error");
     return;
   }
+
+  const provider = stored.provider || "openrouter";
+  const tabWord = source.length === 1 ? "tab" : "tabs";
+  $("confirm-message").textContent =
+    `${source.length} ${tabWord} will be sent to ${provider}.`;
+
+  const preview = $("confirm-tab-preview");
+  preview.innerHTML = "";
+  source.slice(0, 12).forEach((t) => {
+    const d = document.createElement("div");
+    d.textContent = t.title || t.url;
+    preview.appendChild(d);
+  });
+  if (source.length > 12) {
+    const more = document.createElement("div");
+    more.style.color = "var(--text-2)";
+    more.style.fontStyle = "italic";
+    more.textContent = `...and ${source.length - 12} more`;
+    preview.appendChild(more);
+  }
+
+  $("btn-group").disabled = true;
+  $("confirm-panel").classList.remove("hidden");
+
+  handleAIGroup._stored = stored;
+  handleAIGroup._source = source;
+}
+
+async function proceedWithAIGroup() {
+  const stored = handleAIGroup._stored;
+  const source = handleAIGroup._source;
+  if (!stored || !source) return;
 
   showStatus("Analyzing tabs with AI...");
   $("btn-group").disabled = true;
 
   try {
-    const source = selectedTabIds.size > 0
-      ? allTabs.filter((t) => selectedTabIds.has(t.id))
-      : allTabs;
     const tabs = source.map((t) => ({ id: t.id, title: t.title, url: t.url }));
-
-    if (tabs.length === 0) {
-      showStatus("No tabs to group.", "error");
-      $("btn-group").disabled = false;
-      return;
-    }
-
     const groups = await chrome.runtime.sendMessage({
       type: "AI_GROUP_TABS",
       tabs,
@@ -412,12 +448,10 @@ async function handleAIGroup() {
         baseUrl: stored.baseUrl || "",
       },
     });
-
     if (!groups || groups.error) {
       showStatus(groups?.error || "No response from background.", "error");
       return;
     }
-
     showStatus(`Created ${groups.length} tab groups.`, "success");
     await loadTabs();
     showGroupsBanner(groups.length);

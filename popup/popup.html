@@ -144,6 +144,19 @@
     </div>
   </div>
 
+  <div id="confirm-panel" class="settings-panel hidden">
+    <div class="settings-header">
+      <button id="confirm-cancel-btn" class="link-btn">Cancel</button>
+      <h2>Confirm AI Grouping</h2>
+    </div>
+    <div class="settings-body confirm-body">
+      <p class="confirm-message" id="confirm-message"></p>
+      <p class="confirm-detail">Only tab titles and URLs (no page content) are sent. Data goes directly to your provider — not through any intermediary server.</p>
+      <div class="confirm-tab-preview" id="confirm-tab-preview"></div>
+      <button id="confirm-proceed-btn" class="action-btn primary">Send &amp; Group Tabs</button>
+    </div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

@@ -372,7 +372,8 @@ header {
   transition: all 0.1s;
 }
 
-.tab-item:hover .tab-close { opacity: 1; }
+.tab-item:hover .tab-close,
+.home-tab-item:hover .tab-close { opacity: 1; }
 
 .tab-close:hover {
   background: rgba(239,68,68,0.1);
@@ -742,4 +743,49 @@ footer {
 .onboarding-hint a {
   color: var(--accent);
   text-decoration: none;
+}
+
+/* ── Confirm panel ───────────────────────────────────────── */
+
+.confirm-body {
+  gap: 14px;
+}
+
+.confirm-message {
+  font-size: 13px;
+  color: var(--text-0);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.confirm-detail {
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.6;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.confirm-tab-preview {
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.6;
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 12px;
+}
+
+.confirm-tab-preview div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 1px 0;
+}
+
+.confirm-tab-preview div:not(:last-child) {
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
