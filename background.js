@@ -39,7 +39,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 async function groupTabsWithAI(tabs, config) {
   const tabList = tabs
-    .map((t, i) => `${i}: [${t.title}] ${t.url}`)
+    .map((t, i) => {
+      let safeUrl = t.url;
+      try { const u = new URL(t.url); safeUrl = u.origin + u.pathname; } catch {}
+      return `${i}: [${t.title}] ${safeUrl}`;
+    })
     .join("\n");
 
   const prompt = `You are a browser tab organizer. Given the following list of open browser tabs, group them into logical categories (e.g. "Work", "Research", "Shopping", "Social", "Entertainment", etc.).
