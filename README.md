@@ -89,3 +89,66 @@ Because this extension has no build step, after editing any source file:
 | `popup.html/js/css` | Toolbar popup — quick controls, Home Tabs panel, Settings |
 | `dashboard.html/js/css` | Full-page New Tab dashboard |
 | `docs/plans/` | Design docs and implementation plans |
+| `tests/e2e/` | Puppeteer end-to-end tests |
+
+---
+
+## Running Tests Locally
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+This downloads Puppeteer's bundled Chromium (~170 MB on first run).
+
+### Lint
+
+```bash
+npm run lint
+```
+
+Runs ESLint across `background.js`, `popup/popup.js`, and `dashboard/dashboard.js`. Exit code 0 means clean.
+
+### E2E tests
+
+```bash
+npm test
+```
+
+Launches a real Chromium instance with the extension loaded, runs 8 end-to-end tests across the popup and dashboard, then closes the browser. Takes about 15–30 seconds.
+
+Expected output:
+```
+▶ Popup
+  ✔ loads and renders tab count
+  ✔ search input filters the tab list
+  ✔ settings panel opens and closes
+  ✔ home tabs panel opens and closes
+  ✔ AI Group button shows success with mocked sendMessage
+  ✔ Dedupe button shows a status message
+▶ Popup (NNNms)
+
+▶ Dashboard
+  ✔ loads and shows sidebar nav items
+  ✔ main search input is present
+▶ Dashboard (NNNms)
+
+# tests 8
+# pass 8
+# fail 0
+```
+
+AI API calls are mocked — no API key is required to run the tests.
+
+### Run lint and tests together
+
+```bash
+npm run lint && npm test
+```
