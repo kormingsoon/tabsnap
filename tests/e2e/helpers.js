@@ -29,6 +29,9 @@ export async function launchBrowser() {
  * Wait for the extension's background service worker to register,
  * then extract the extension ID from its URL.
  * URL format: chrome-extension://<id>/background.js
+ *
+ * In headless CI, Chrome often doesn't activate the service worker until
+ * a page is opened. We open a blank page first to trigger activation.
  */
 export async function getExtensionId(browser) {
   const isSw = (t) =>
@@ -38,8 +41,13 @@ export async function getExtensionId(browser) {
   const existing = browser.targets().find(isSw);
   if (existing) return new URL(existing.url()).hostname;
 
-  // Otherwise wait for it
-  const swTarget = await browser.waitForTarget(isSw, { timeout: 20000 });
+  // Open a page to prompt Chrome to activate the service worker
+  const warmup = await browser.newPage();
+  await warmup.goto('about:blank');
+  await warmup.close();
+
+  // Wait for the service worker (extended timeout for slow CI runners)
+  const swTarget = await browser.waitForTarget(isSw, { timeout: 30000 });
   return new URL(swTarget.url()).hostname;
 }
 
