@@ -7,7 +7,9 @@
     "lint": "eslint background.js popup/popup.js dashboard/dashboard.js"
   },
   "devDependencies": {
+    "@eslint/js": "^8.57.0",
     "eslint": "^8.57.0",
+    "globals": "^13.24.0",
     "puppeteer": "^22.0.0"
   }
 }

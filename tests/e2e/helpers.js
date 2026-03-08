@@ -31,12 +31,15 @@ export async function launchBrowser() {
  * URL format: chrome-extension://<id>/background.js
  */
 export async function getExtensionId(browser) {
-  const swTarget = await browser.waitForTarget(
-    (t) =>
-      t.type() === 'service_worker' &&
-      t.url().startsWith('chrome-extension://'),
-    { timeout: 10000 }
-  );
+  const isSw = (t) =>
+    t.type() === 'service_worker' && t.url().startsWith('chrome-extension://');
+
+  // Check if it's already registered
+  const existing = browser.targets().find(isSw);
+  if (existing) return new URL(existing.url()).hostname;
+
+  // Otherwise wait for it
+  const swTarget = await browser.waitForTarget(isSw, { timeout: 20000 });
   return new URL(swTarget.url()).hostname;
 }
 
