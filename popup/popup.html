@@ -86,6 +86,19 @@
       <a id="home-tabs-link" href="#" class="link-btn">⌂ Saved Tabs</a>
       <span class="version">v0.2.0</span>
     </footer>
+
+    <div id="confirm-panel" class="settings-panel hidden">
+      <div class="settings-header">
+        <button id="confirm-cancel-btn" class="link-btn">Cancel</button>
+        <h2>Confirm AI Grouping</h2>
+      </div>
+      <div class="settings-body confirm-body">
+        <p class="confirm-message" id="confirm-message"></p>
+        <p class="confirm-detail">Only tab titles and URLs (no page content) are sent. Data goes directly to your provider — not through any intermediary server.</p>
+        <div class="confirm-tab-preview" id="confirm-tab-preview"></div>
+        <button id="confirm-proceed-btn" class="action-btn primary">Send &amp; Group Tabs</button>
+      </div>
+    </div>
   </div>
 
   <div id="settings-panel" class="settings-panel hidden">
@@ -157,19 +170,6 @@
         <input type="checkbox" id="home-tabs-auto-open">
       </label>
       <button id="btn-open-home-now" class="action-btn primary">▶ Open all saved tabs</button>
-    </div>
-  </div>
-
-  <div id="confirm-panel" class="settings-panel hidden">
-    <div class="settings-header">
-      <button id="confirm-cancel-btn" class="link-btn">Cancel</button>
-      <h2>Confirm AI Grouping</h2>
-    </div>
-    <div class="settings-body confirm-body">
-      <p class="confirm-message" id="confirm-message"></p>
-      <p class="confirm-detail">Only tab titles and URLs (no page content) are sent. Data goes directly to your provider — not through any intermediary server.</p>
-      <div class="confirm-tab-preview" id="confirm-tab-preview"></div>
-      <button id="confirm-proceed-btn" class="action-btn primary">Send &amp; Group Tabs</button>
     </div>
   </div>
 

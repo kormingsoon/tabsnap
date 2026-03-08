@@ -407,6 +407,7 @@ async function handleAIGroup() {
     : allTabs;
 
   if (source.length === 0) {
+    $("btn-group").disabled = false;
     showStatus("No tabs to group.", "error");
     return;
   }
@@ -431,7 +432,6 @@ async function handleAIGroup() {
     preview.appendChild(more);
   }
 
-  $("btn-group").disabled = true;
   $("confirm-panel").classList.remove("hidden");
 
   handleAIGroup._stored = stored;
