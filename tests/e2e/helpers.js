@@ -26,29 +26,36 @@ export async function launchBrowser() {
 }
 
 /**
- * Wait for the extension's background service worker to register,
- * then extract the extension ID from its URL.
- * URL format: chrome-extension://<id>/background.js
+ * Poll for the extension's background service worker and return its ID.
  *
- * In headless CI, Chrome often doesn't activate the service worker until
- * a page is opened. We open a blank page first to trigger activation.
+ * waitForTarget() is event-based and misses the SW if it registered before
+ * the listener was attached (common on slow CI runners). Polling avoids
+ * that race condition.  A warmup page is opened on the first poll so Chrome
+ * actually activates the SW in headless mode.
  */
 export async function getExtensionId(browser) {
   const isSw = (t) =>
     t.type() === 'service_worker' && t.url().startsWith('chrome-extension://');
 
-  // Check if it's already registered
-  const existing = browser.targets().find(isSw);
-  if (existing) return new URL(existing.url()).hostname;
+  const deadline = Date.now() + 30_000;
+  let warmupDone = false;
 
-  // Open a page to prompt Chrome to activate the service worker
-  const warmup = await browser.newPage();
-  await warmup.goto('about:blank');
-  await warmup.close();
+  while (Date.now() < deadline) {
+    const target = browser.targets().find(isSw);
+    if (target) return new URL(target.url()).hostname;
 
-  // Wait for the service worker (extended timeout for slow CI runners)
-  const swTarget = await browser.waitForTarget(isSw, { timeout: 30000 });
-  return new URL(swTarget.url()).hostname;
+    if (!warmupDone) {
+      // Opening any page triggers the extension SW to activate
+      const page = await browser.newPage();
+      await page.goto('about:blank');
+      await page.close();
+      warmupDone = true;
+    }
+
+    await new Promise((r) => setTimeout(r, 300));
+  }
+
+  throw new Error('Extension service worker not found within 30 s');
 }
 
 export const popupUrl = (id) =>
