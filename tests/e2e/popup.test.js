@@ -116,6 +116,10 @@ describe('Popup', () => {
 
     await page.click('#btn-group');
 
+    // A confirmation dialog appears before sending — click through it
+    await page.waitForSelector('#confirm-proceed-btn:not([disabled])');
+    await page.click('#confirm-proceed-btn');
+
     await page.waitForFunction(
       () => {
         const el = document.getElementById('status-message');
