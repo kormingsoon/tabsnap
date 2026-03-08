@@ -409,7 +409,8 @@ async function handleAIGroup() {
     });
 
     if (!groups || groups.error) {
-      showStatus(groups?.error || "No response from background.", "error");
+      const { text, settingsLink } = classifyApiError(groups?.error);
+      showStatus(text, "error", true, settingsLink ? showSettings : null);
       return;
     }
 
@@ -417,7 +418,8 @@ async function handleAIGroup() {
     await loadTabs();
     showGroupsBanner(groups.length);
   } catch (err) {
-    showStatus("Failed to group tabs: " + err.message, "error");
+    const { text, settingsLink } = classifyApiError(err.message);
+    showStatus(text, "error", true, settingsLink ? showSettings : null);
   } finally {
     $("btn-group").disabled = false;
   }
@@ -555,12 +557,72 @@ async function handleSuspend() {
 // ─── Status ──────────────────────────────────────────────────────────────────
 
 let statusTimer;
-function showStatus(msg, type = "") {
+function showStatus(msg, type = "", persistent = false, onSettingsLink = null) {
   const el = $("status-message");
-  el.textContent = msg;
-  el.className = "status" + (type ? ` ${type}` : "");
   clearTimeout(statusTimer);
-  statusTimer = setTimeout(() => el.classList.add("hidden"), 4000);
+  el.className = "status" + (type ? ` ${type}` : "");
+  el.classList.remove("hidden");
+
+  if (persistent) {
+    el.classList.add("persistent");
+    const linkHtml = onSettingsLink
+      ? ` — <button class="status-settings-link">→ Settings</button>`
+      : "";
+    el.innerHTML =
+      `<span>${msg}${linkHtml}</span>` +
+      `<button class="status-dismiss" aria-label="Dismiss">×</button>`;
+    el.querySelector(".status-dismiss").addEventListener("click", () => {
+      el.classList.add("hidden");
+    });
+    if (onSettingsLink) {
+      el.querySelector(".status-settings-link").addEventListener("click", () => {
+        el.classList.add("hidden");
+        onSettingsLink();
+      });
+    }
+  } else {
+    el.textContent = msg;
+    statusTimer = setTimeout(() => el.classList.add("hidden"), 4000);
+  }
+}
+
+function setFieldError(inputId, errorId, msg) {
+  const input = $(inputId);
+  const errorEl = $(errorId);
+  input.classList.add("input-error");
+  if (errorEl) {
+    errorEl.textContent = msg;
+    errorEl.classList.remove("hidden");
+  }
+  const clear = () => {
+    input.classList.remove("input-error");
+    if (errorEl) {
+      errorEl.textContent = "";
+      errorEl.classList.add("hidden");
+    }
+    input.removeEventListener("input", clear);
+  };
+  input.addEventListener("input", clear);
+}
+
+function classifyApiError(msg) {
+  if (!msg) return { text: "AI grouping failed.", settingsLink: false };
+  const m = msg.toLowerCase();
+  if (m.includes("401") || m.includes("403") || m.includes("invalid_api_key") ||
+      m.includes("invalid api key") || m.includes("unauthorized") || m.includes("authentication")) {
+    return { text: "Invalid API key.", settingsLink: true };
+  }
+  if (m.includes("404") || m.includes("model_not_found") || m.includes("model not found") ||
+      m.includes("no such model")) {
+    return { text: "Model not found — check the model name.", settingsLink: true };
+  }
+  if (m.includes("no base url") || m.includes("base url")) {
+    return { text: "No Base URL configured for custom provider.", settingsLink: true };
+  }
+  if (m.includes("429") || m.includes("rate limit")) {
+    return { text: "Rate limit reached — wait a moment and try again.", settingsLink: false };
+  }
+  return { text: `AI grouping failed: ${msg}`, settingsLink: false };
 }
 
 // ─── Settings ────────────────────────────────────────────────────────────────
@@ -601,6 +663,13 @@ function updateProviderUI(provider) {
 }
 
 function showSettings() {
+  ["api-key-input", "base-url-input"].forEach((id) =>
+    $(id).classList.remove("input-error")
+  );
+  ["api-key-error", "base-url-error"].forEach((id) => {
+    const el = $(id);
+    if (el) { el.textContent = ""; el.classList.add("hidden"); }
+  });
   $("settings-panel").classList.remove("hidden");
 }
 
@@ -624,6 +693,19 @@ async function saveSettings() {
   const apiKey = $("api-key-input").value.trim();
   const model = $("model-input").value.trim();
   const baseUrl = $("base-url-input").value.trim();
+
+  let valid = true;
+
+  if (!apiKey) {
+    setFieldError("api-key-input", "api-key-error", "API key is required.");
+    valid = false;
+  }
+  if (provider === "custom" && !baseUrl) {
+    setFieldError("base-url-input", "base-url-error", "Base URL is required for custom provider.");
+    valid = false;
+  }
+  if (!valid) return;
+
   await chrome.storage.local.set({ apiKey, provider, model, baseUrl });
   hideSettings();
   showStatus("Settings saved.", "success");

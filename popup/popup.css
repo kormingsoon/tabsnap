@@ -478,6 +478,51 @@ footer {
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
+/* ── Field error state ─────────────────── */
+.input-error {
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+.field-error-msg {
+  font-size: 10px;
+  color: #F87171;
+  margin-top: -2px;
+  line-height: 1.4;
+}
+
+/* ── Persistent status bar ─────────────── */
+.status.persistent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.status-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0 2px;
+}
+.status-dismiss:hover { opacity: 1; }
+
+.status-settings-link {
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+  white-space: nowrap;
+}
+
 .setting-item select {
   background: var(--bg-input);
   border: 1px solid var(--border);
