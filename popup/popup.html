@@ -44,6 +44,10 @@
         Get a free key at
         <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>
       </p>
+      <p class="onboarding-hint" style="margin-top: -4px;">
+        Your tab titles and URLs are sent directly to the provider using your key.
+        No data passes through our servers.
+      </p>
     </div>
 
     <div class="search-bar">
@@ -62,6 +66,10 @@
       </button>
     </div>
 
+    <p class="privacy-note">
+      Tab titles &amp; URLs sent directly to your provider — no intermediary.
+    </p>
+
     <div id="status-message" class="status hidden"></div>
 
     <div class="section-header">
@@ -78,7 +86,21 @@
       <a id="home-tabs-link" href="#" class="link-btn">⌂ Saved Tabs</a>
       <span class="version">v0.2.0</span>
     </footer>
+
   </div>
+
+  <div id="confirm-panel" class="settings-panel hidden">
+      <div class="settings-header">
+        <button id="confirm-cancel-btn" class="link-btn">Cancel</button>
+        <h2>Confirm AI Grouping</h2>
+      </div>
+      <div class="settings-body confirm-body">
+        <p class="confirm-message" id="confirm-message"></p>
+        <p class="confirm-detail">Only tab titles and URLs (no page content) are sent. Data goes directly to your provider — not through any intermediary server.</p>
+        <div class="confirm-tab-preview" id="confirm-tab-preview"></div>
+        <button id="confirm-proceed-btn" class="action-btn primary">Send &amp; Group Tabs</button>
+      </div>
+    </div>
 
   <div id="settings-panel" class="settings-panel hidden">
     <div class="settings-header">
@@ -109,6 +131,14 @@
       </label>
       <p class="setting-hint" id="provider-hint"></p>
       <button id="save-settings" class="action-btn primary">Save Settings</button>
+      <div class="privacy-disclosure">
+        <span class="setting-label">Privacy</span>
+        <p class="setting-hint">
+          Tab visit frequency is tracked <strong>locally</strong> to power usage insights.
+          This data never leaves your device.
+        </p>
+        <button id="clear-analytics-btn" class="action-btn">Clear local analytics</button>
+      </div>
     </div>
   </div>
 
