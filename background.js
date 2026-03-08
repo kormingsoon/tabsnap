@@ -46,7 +46,7 @@ async function groupTabsWithAI(tabs, config) {
         if (u.origin !== "null") {
           safeUrl = u.origin + u.pathname;
         }
-      } catch {}
+      } catch { /* invalid URL — keep safeUrl as raw t.url */ }
       return `${i}: [${t.title}] ${safeUrl}`;
     })
     .join("\n");
