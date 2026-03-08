@@ -14,7 +14,9 @@ Since there is no build step, development is done by:
 3. Clicking "Load unpacked" and selecting this directory
 4. After editing files, click the refresh icon on the extension card
 
-There are no automated tests, linters, or test commands.
+Automated tests and linting are available:
+- **Lint**: `npm run lint` (uses ESLint flat config)
+- **Test**: `npm test` (uses Node.js test runner and Puppeteer)
 
 ## Architecture
 
