@@ -1,6 +1,6 @@
 # TabSnap — AI Tab Manager
 
-A Chrome extension that uses AI to intelligently group, organize, and manage your browser tabs. Includes a full-page dashboard that replaces the New Tab page.
+A Chrome extension that uses AI to intelligently group, organize, and manage your browser tabs. Includes a full-page dashboard accessible from the toolbar or via keyboard shortcut.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ A Chrome extension that uses AI to intelligently group, organize, and manage you
 
 ## Setup
 
-Click the extension icon, then open **⚙ Settings** and configure your API provider and key. The key is saved locally in your browser and never sent anywhere except directly to your chosen AI provider.
+Click the extension icon, then open **Settings** and configure your API provider and key. The key is saved locally in your browser and never sent anywhere except directly to your chosen AI provider.
 
 Supported providers:
 - **Anthropic** (Claude) — [console.anthropic.com](https://console.anthropic.com)
@@ -29,44 +29,69 @@ Supported providers:
 
 ## Features
 
-### Dashboard (New Tab)
-Every new tab opens the TabSnap dashboard — a full-page command center for all your tabs across all windows. Four sections:
+### Dashboard
+
+Open the full-page TabSnap dashboard by clicking the **grid icon** in the popup header or pressing **Alt+Y**. Four sections:
 
 - **All Tabs** — every open tab across every window, searchable. Click any tab to switch to it.
 - **Groups** — visual card view of your Chrome tab groups. Rename groups inline. Run AI grouping from here.
-- **Recent** — the last 25 closed tabs and windows with one-click restore.
+- **Recent** — recently closed tabs and windows with one-click restore.
 - **Analytics** — most visited domains, tabs open longer than a week, and visit counts.
 
-> Prefer Chrome's default New Tab? Toggle it off in **⚙ Settings → Use TabSnap as New Tab**.
-
 ### AI Group Tabs
-Sends your open tabs to AI, which categorizes them into labeled groups (e.g. Work, Research, Shopping, Social). Groups with 3 or more tabs are auto-collapsed. After grouping, the popup reflects the groups with color-coded headers.
+
+Sends your open tabs to AI, which categorizes them into labeled groups (e.g. Work, Research, Shopping, Social). Groups with more than 3 tabs are auto-collapsed. After grouping, the popup reflects the groups with color-coded headers.
+
+Before sending, a confirmation dialog shows you exactly which tabs will be shared and reminds you that only tab titles and URLs are sent — directly to your chosen provider, not through any intermediary server.
+
+If you haven't set an API key yet, an onboarding prompt appears the first time you click **AI Group Tabs**, guiding you to get a free OpenRouter key and get started immediately.
+
+You can also select specific tabs with their checkboxes and AI-group only those.
 
 ### Rename Groups
+
 Click any group header in the tab list or dashboard to rename it inline. Or use the **Edit Groups** panel (appears after AI grouping) to batch-rename all groups at once.
 
-### Home Tabs
-Save a set of tabs that represent your ideal starting point. Access via **⌂ Home** in the popup footer.
+### Saved Tabs
+
+Save a set of tabs to restore any time. Access via **Saved Tabs** in the popup footer.
 
 - **+ Add current tab** — saves the tab you're on
-- **Snapshot all tabs** — saves every open tab in the current window
-- **Auto-open on browser start** toggle — opens your home tabs automatically when Chrome launches (skips any already open)
-- **Open now** — launch home tabs any time, manually
+- **Save all open tabs** — saves every open tab in the current window as your saved set
+- **Auto-open on browser start** toggle — opens your saved tabs automatically when Chrome launches (skips any already open)
+- **Open all saved tabs** — launch saved tabs any time, manually
 
 ### Last Used
+
 Each tab displays how long ago you last visited it ("5 min ago", "2 hr ago"). Useful for finding stale tabs.
 
 ### Dedupe
+
 Closes duplicate tabs that share the exact same URL, keeping one copy of each.
 
 ### Suspend Inactive
-Discards idle tabs from memory without closing them. The tab reloads when you switch back to it — useful when you have many tabs open and want to free up RAM.
+
+Discards idle tabs from memory without closing them. The tab reloads when you switch back to it — useful when you have many tabs open and want to free up RAM. Tabs that are playing audio are not suspended.
 
 ### Search
+
 Filter your open tabs by title or URL in real time using the search bar in the popup or dashboard.
 
 ### Multi-select & Close
-Check multiple tabs in the popup list and close them all at once with the **Close Selected** button.
+
+Check multiple tabs in the popup list and close them all at once with the **Close selected** button.
+
+### Privacy
+
+Tab visit frequency is tracked **locally** to power usage analytics. This data never leaves your device. You can clear it at any time from **Settings → Clear local analytics**.
+
+---
+
+## Keyboard Shortcut
+
+| Shortcut | Action |
+|----------|--------|
+| `Alt+Y` | Open TabSnap Dashboard |
 
 ---
 
@@ -84,10 +109,10 @@ Because this extension has no build step, after editing any source file:
 
 | File | Purpose |
 |------|---------|
-| `manifest.json` | MV3 config — permissions, service worker, New Tab override |
-| `background.js` | Service worker — AI grouping, startup home tabs, analytics tracking |
-| `popup.html/js/css` | Toolbar popup — quick controls, Home Tabs panel, Settings |
-| `dashboard.html/js/css` | Full-page New Tab dashboard |
+| `manifest.json` | MV3 config — permissions, service worker, keyboard shortcuts |
+| `background.js` | Service worker — AI grouping, startup saved tabs, analytics tracking |
+| `popup/popup.html/js/css` | Toolbar popup — quick controls, Saved Tabs panel, Settings |
+| `dashboard/dashboard.html/js/css` | Full-page dashboard — all tabs, groups, recent, analytics |
 | `docs/plans/` | Design docs and implementation plans |
 | `tests/e2e/` | Puppeteer end-to-end tests |
 
@@ -122,28 +147,7 @@ Runs ESLint across `background.js`, `popup/popup.js`, and `dashboard/dashboard.j
 npm test
 ```
 
-Launches a real Chromium instance with the extension loaded, runs 8 end-to-end tests across the popup and dashboard, then closes the browser. Takes about 15–30 seconds.
-
-Expected output:
-```
-▶ Popup
-  ✔ loads and renders tab count
-  ✔ search input filters the tab list
-  ✔ settings panel opens and closes
-  ✔ home tabs panel opens and closes
-  ✔ AI Group button shows success with mocked sendMessage
-  ✔ Dedupe button shows a status message
-▶ Popup (NNNms)
-
-▶ Dashboard
-  ✔ loads and shows sidebar nav items
-  ✔ main search input is present
-▶ Dashboard (NNNms)
-
-# tests 8
-# pass 8
-# fail 0
-```
+Launches a real Chromium instance with the extension loaded, runs end-to-end tests across the popup and dashboard, then closes the browser. Takes about 15–30 seconds.
 
 AI API calls are mocked — no API key is required to run the tests.
 
