@@ -42,7 +42,13 @@ async function groupTabsWithAI(tabs, config) {
     .map((t, i) => `${i}: [${t.title}] ${t.url}`)
     .join("\n");
 
-  const prompt = `You are a browser tab organizer. Given the following list of open browser tabs, group them into logical categories (e.g. "Work", "Research", "Shopping", "Social", "Entertainment", etc.).
+  const prompt = `You are a browser tab organizer. Given the following list of open browser tabs, group them into logical categories based on what the tabs actually contain.
+
+Rules:
+- Use SPECIFIC category names derived from the actual tab content. Prefer specific over generic.
+- Draw from examples like: "YouTube Channels", "Game Development", "Technology & Software", "Reddit & Forums", "Web Development Tools", "AI & Machine Learning", "Video Streaming & Movies", "GitHub & Code Repositories", "Finance & Investing", "Academic Research", "Social Media", "Music & Audio", "News & Current Events", "Gaming", "Anime & Manga", "Cybersecurity", "DevOps & Infrastructure", "Online Courses & Tutorials", "Productivity & Tools", "Design & Creative Tools", "Crypto & Blockchain", "Sports & Athletics", "Travel & Places", "Food & Recipes", "Health & Fitness", "Live Streaming & Twitch", "Programming Docs & References", "Entertainment & Pop Culture", "Forums & Community Discussions", "Science & Technology News", "Art & Design", "Miscellaneous"
+- Avoid vague names like "Work", "Research", "Entertainment", "Social" unless no better name fits.
+- If no example fits, invent a specific descriptive name based on the actual tab content.
 
 Respond ONLY with a valid JSON array. Each element should be:
 { "name": "Group Name", "tabIndexes": [0, 2, 5] }
