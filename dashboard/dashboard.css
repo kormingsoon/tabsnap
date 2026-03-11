@@ -441,7 +441,140 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
+
+.group-card-tab-delete {
+  display: none;
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--text-1);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+.group-card-tab:hover .group-card-tab-delete {
+  display: block;
+}
+.group-card-tab-delete:hover {
+  color: #ff6b6b;
+  background: rgba(255,107,107,0.12);
+}
+
+.group-card-delete {
+  display: none;
+  margin-left: 6px;
+  background: none;
+  border: none;
+  color: var(--text-1);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.group-card-header:hover .group-card-delete {
+  display: block;
+}
+.group-card-delete:hover {
+  color: #ff6b6b;
+  background: rgba(255,107,107,0.12);
+}
+
+/* ── Groups Top Bar ──────────────────────────────────────── */
+
+.groups-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-new-group {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.btn-new-group:hover { opacity: 0.85; }
+
+/* ── Create Group Form ───────────────────────────────────── */
+
+.create-group-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.create-group-name {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-0);
+  padding: 5px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  min-width: 160px;
+  outline: none;
+}
+.create-group-name:focus { border-color: var(--accent-ring); }
+
+.create-group-colors {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.create-group-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.1s, transform 0.1s;
+}
+.create-group-swatch.selected,
+.create-group-swatch:hover { border-color: #fff; transform: scale(1.2); }
+
+.create-group-submit {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+}
+.create-group-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.create-group-cancel {
+  background: none;
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.create-group-cancel:hover { color: var(--text-0); }
 
 /* ── Recent ──────────────────────────────────────────────── */
 
