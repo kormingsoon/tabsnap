@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/e2e/popup.test.js && node --test tests/e2e/dashboard.test.js",
+    "test": "node --test tests/e2e/all.test.js",
     "lint": "eslint background.js popup/popup.js dashboard/dashboard.js"
   },
   "devDependencies": {

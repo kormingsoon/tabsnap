@@ -21,7 +21,6 @@ export async function launchBrowser() {
       `--load-extension=${EXTENSION_PATH}`,
       '--no-sandbox',
       '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
     ],
   });
 }
