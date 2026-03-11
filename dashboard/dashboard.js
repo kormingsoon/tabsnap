@@ -239,6 +239,75 @@ function openColorPopover(dotBtn, group) {
   setTimeout(() => document.addEventListener("click", dismiss, true), 0);
 }
 
+function renderCreateGroupForm(onCreated) {
+  const form = document.createElement("div");
+  form.className = "create-group-form";
+
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameInput.className = "create-group-name";
+  nameInput.placeholder = "Group name…";
+  nameInput.maxLength = 50;
+
+  const colorRow = document.createElement("div");
+  colorRow.className = "create-group-colors";
+  let selectedColor = "blue";
+  const COLORS = Object.keys(GROUP_COLOR_MAP);
+  COLORS.forEach((colorName) => {
+    const swatch = document.createElement("button");
+    swatch.type = "button";
+    swatch.className = "create-group-swatch";
+    swatch.style.background = GROUP_COLOR_MAP[colorName];
+    swatch.title = colorName;
+    swatch.setAttribute("aria-label", colorName);
+    if (colorName === selectedColor) swatch.classList.add("selected");
+    swatch.addEventListener("click", () => {
+      colorRow.querySelectorAll(".create-group-swatch").forEach((s) => s.classList.remove("selected"));
+      swatch.classList.add("selected");
+      selectedColor = colorName;
+    });
+    colorRow.appendChild(swatch);
+  });
+
+  const createBtn = document.createElement("button");
+  createBtn.type = "button";
+  createBtn.className = "create-group-submit";
+  createBtn.textContent = "Create";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.className = "create-group-cancel";
+  cancelBtn.textContent = "Cancel";
+
+  createBtn.addEventListener("click", async () => {
+    const name = nameInput.value.trim() || "New Group";
+    createBtn.disabled = true;
+    createBtn.textContent = "Creating…";
+    try {
+      const newTab = await chrome.tabs.create({ active: false, url: "chrome://newtab/" });
+      const groupId = await chrome.tabs.group({ tabIds: [newTab.id] });
+      await chrome.tabGroups.update(groupId, { title: name, color: selectedColor });
+    } catch (err) {
+      showDashStatus("Could not create group: " + err.message, "error");
+    }
+    onCreated();
+  });
+
+  cancelBtn.addEventListener("click", () => onCreated());
+
+  nameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); createBtn.click(); }
+    if (e.key === "Escape") { e.preventDefault(); cancelBtn.click(); }
+  });
+
+  form.appendChild(nameInput);
+  form.appendChild(colorRow);
+  form.appendChild(createBtn);
+  form.appendChild(cancelBtn);
+
+  return form;
+}
+
 async function renderGroups() {
   const el = document.getElementById("section-groups");
   el.innerHTML = '<div class="dash-loading">Loading groups...</div>';
@@ -256,8 +325,26 @@ async function renderGroups() {
 
   el.innerHTML = "";
 
+  const topBar = document.createElement("div");
+  topBar.className = "groups-topbar";
+
+  const newGroupBtn = document.createElement("button");
+  newGroupBtn.type = "button";
+  newGroupBtn.className = "btn-new-group";
+  newGroupBtn.textContent = "+ New Group";
+  newGroupBtn.addEventListener("click", () => {
+    if (topBar.querySelector(".create-group-form")) return;
+    newGroupBtn.style.display = "none";
+    const form = renderCreateGroupForm(async () => {
+      await renderGroups();
+    });
+    topBar.appendChild(form);
+  });
+  topBar.appendChild(newGroupBtn);
+  el.appendChild(topBar);
+
   if (groups.length === 0) {
-    el.innerHTML = '<div class="dash-empty">No tab groups yet. Use AI Group Tabs to create some.</div>';
+    el.insertAdjacentHTML("beforeend", '<div class="dash-empty">No tab groups yet. Use AI Group Tabs or "+ New Group" to create some.</div>');
     return;
   }
 
@@ -307,9 +394,27 @@ function createGroupCard(group, tabs) {
   count.className = "group-card-count";
   count.textContent = `${tabs.length} tab${tabs.length !== 1 ? "s" : ""}`;
 
+  const groupDel = document.createElement("button");
+  groupDel.type = "button";
+  groupDel.className = "group-card-delete";
+  groupDel.textContent = "×";
+  groupDel.title = "Delete group and close all tabs";
+  groupDel.setAttribute("aria-label", "Delete group");
+  groupDel.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const tabIds = tabs.map((t) => t.id);
+    if (tabIds.length > 0) {
+      try {
+        await chrome.tabs.remove(tabIds);
+      } catch { /* some tabs may already be closed */ }
+    }
+    await renderGroups();
+  });
+
   header.appendChild(dot);
   header.appendChild(name);
   header.appendChild(count);
+  header.appendChild(groupDel);
 
   const tabList = document.createElement("div");
   tabList.className = "group-card-tabs";
@@ -336,8 +441,23 @@ function createGroupCard(group, tabs) {
     tabTitle.className = "group-card-tab-title";
     tabTitle.textContent = tab.title || "Untitled";
 
+    const tabDel = document.createElement("button");
+    tabDel.type = "button";
+    tabDel.className = "group-card-tab-delete";
+    tabDel.textContent = "×";
+    tabDel.title = "Close this tab";
+    tabDel.setAttribute("aria-label", "Close tab");
+    tabDel.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      try {
+        await chrome.tabs.remove(tab.id);
+      } catch { /* tab already closed */ }
+      await renderGroups();
+    });
+
     tabItem.appendChild(fav);
     tabItem.appendChild(tabTitle);
+    tabItem.appendChild(tabDel);
     tabItem.addEventListener("click", () => {
       chrome.tabs.update(tab.id, { active: true });
       chrome.windows.update(tab.windowId, { focused: true });
