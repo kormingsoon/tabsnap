@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TabSnap Privacy Policy</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f4ee;
+      --panel: #fffdf8;
+      --text: #1f1a17;
+      --muted: #625750;
+      --accent: #b45309;
+      --border: #e7dccd;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: linear-gradient(180deg, #f4efe6 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 20px 72px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 18px 40px rgba(48, 35, 22, 0.08);
+    }
+
+    h1, h2 {
+      line-height: 1.2;
+      margin: 0 0 16px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 28px;
+    }
+
+    p, li {
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .lede, .meta {
+      color: var(--muted);
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    code {
+      font-family: "Courier New", monospace;
+      background: #f4ead9;
+      padding: 0.1rem 0.35rem;
+      border-radius: 6px;
+    }
+
+    ul {
+      padding-left: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>Privacy Policy for TabSnap</h1>
+      <p class="meta"><strong>Effective date:</strong> March 13, 2026</p>
+      <p class="lede">
+        TabSnap is a Chrome extension that helps users organize browser tabs, including optional AI-powered tab grouping.
+        This Privacy Policy explains what information the extension handles, how it is used, when it may be shared, and how users can control it.
+      </p>
+
+      <h2>Information the extension handles</h2>
+      <ul>
+        <li>Open tab titles and URLs, when needed to display tabs and run tab-management features.</li>
+        <li>User-provided API keys and provider settings, stored locally in the browser.</li>
+        <li>Saved home tabs, including tab URLs, titles, and favicon URLs, stored locally in the browser.</li>
+        <li>Local analytics data consisting of website hostnames and visit counts, stored locally in the browser.</li>
+        <li>Recently closed tab and session information made available through Chrome browser APIs.</li>
+      </ul>
+
+      <h2>How the extension uses information</h2>
+      <ul>
+        <li>To show the user their current tabs and let them manage, group, close, suspend, and save tabs.</li>
+        <li>To support optional AI grouping of tabs based on tab titles and URLs selected by the user.</li>
+        <li>To save user preferences such as API provider, model, and home tab settings.</li>
+        <li>To generate local usage analytics, such as hostname counts, inside the browser.</li>
+      </ul>
+
+      <h2>What the extension does not do</h2>
+      <ul>
+        <li>It does not operate its own remote server to receive user tab data.</li>
+        <li>It does not sell user data.</li>
+        <li>It does not use tab data for advertising, credit decisions, or data brokerage.</li>
+      </ul>
+
+      <h2>When information is sent to third parties</h2>
+      <p>
+        If the user chooses the AI grouping feature, the extension sends relevant tab titles and URLs to the AI provider selected by the user,
+        along with the user's API key, so the provider can generate tab groups.
+      </p>
+      <p>
+        Depending on the user's settings, this may include services such as Anthropic, OpenRouter, Groq, or another compatible API endpoint configured by the user.
+        Those third-party services process data under their own privacy policies and terms.
+      </p>
+
+      <h2>Local storage</h2>
+      <p>
+        TabSnap stores settings and extension data locally using Chrome's <code>chrome.storage.local</code> API.
+        This may include API keys, provider settings, saved home tabs, auto-open preferences, and local analytics data.
+      </p>
+
+      <h2>Data sharing and sale</h2>
+      <p>
+        TabSnap does not sell personal information. The extension does not share user data with third parties except when the user explicitly uses the AI grouping feature
+        or configures a third-party API provider for that feature.
+      </p>
+
+      <h2>Data retention and control</h2>
+      <p>
+        Locally stored extension data remains in the user's browser until the user clears it, changes it, or uninstalls the extension.
+        Users can remove saved data through the extension settings or Chrome's extension storage controls.
+      </p>
+
+      <h2>Security</h2>
+      <p>
+        The extension stores data locally in the browser and uses the user's provided API credentials to connect directly to the selected AI provider.
+        No separate backend operated by TabSnap is used for AI requests.
+      </p>
+
+      <h2>Children's privacy</h2>
+      <p>
+        TabSnap is not directed to children under 13, and it is not designed to knowingly collect personal information from children.
+      </p>
+
+      <h2>Changes to this policy</h2>
+      <p>
+        This Privacy Policy may be updated from time to time. Any updates will be posted at this page with a revised effective date.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        For support or privacy questions, please use the GitHub issues page for this project:
+        <a href="https://github.com/kormingsoon/tabsnap/issues">https://github.com/kormingsoon/tabsnap/issues</a>.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
