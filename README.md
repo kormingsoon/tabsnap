@@ -105,6 +105,27 @@ Because this extension has no build step, after editing any source file:
 
 ---
 
+## Publishing The Privacy Policy
+
+This repo includes a public privacy policy page at `privacy-policy.html` that can be hosted with GitHub Pages for Chrome Web Store submission.
+
+1. Push the repository to a public GitHub repo.
+2. In GitHub, open **Settings -> Pages**.
+3. Under **Build and deployment**, choose **Deploy from a branch**.
+4. Select your default branch and the **/ (root)** folder, then save.
+5. Wait for GitHub Pages to publish the site.
+6. Use the public URL for `privacy-policy.html` in the Chrome Web Store Developer Dashboard under your item's **Privacy** tab.
+
+The URL will usually look like:
+
+```text
+https://YOUR-USERNAME.github.io/REPO-NAME/privacy-policy.html
+```
+
+Before publishing, update the contact section in `privacy-policy.html` with your real support email or support page.
+
+---
+
 ## Project Structure
 
 | File | Purpose |
